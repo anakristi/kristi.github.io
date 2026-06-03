@@ -100,14 +100,33 @@
 
   </div>
 
-  <!-- 📹 Video Box (Muted + Autoplay agar otomatis jalan) -->
+  <!-- 📹 Video Box -->
   <div class="video-container">
-    <video autoplay muted loop playsinline controls>
+    <video id="myVideo" autoplay muted loop playsinline controls>
       <source src="videoplayback.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
 
   <script src="main.js"></script>
+
+  <!-- 🛠️ SCRIPT KHUSUS UNTUK MEMAKSA VIDEO BERPUTAR -->
+  <script>
+    const video = document.getElementById('myVideo');
+
+    // Coba putar otomatis saat load
+    window.addEventListener('load', () => {
+      video.play().catch(error => {
+        console.log("Autoplay diblokir oleh browser, menunggu interaksi user...", error);
+      });
+    });
+
+    // Paksa putar begitu user menyentuh atau mengeklik area mana saja di layar
+    document.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+      }
+    }, { once: true }); // Hanya berjalan sekali klik awal saja
+  </script>
 </body>
 </html>
