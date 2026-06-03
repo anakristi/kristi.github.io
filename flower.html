@@ -8,7 +8,6 @@
   <link rel="icon" href="img/flowers.png" type="image/x-icon">
   <title>flowers</title>
 
-  <!-- tambahan style untuk ucapan -->
   <style>
     .ucapan {
       position: absolute;
@@ -29,10 +28,10 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Style tambahan untuk video agar muncul di depan dan estetik */
+    /* Style tambahan untuk video (Sudah dinaikkan posisinya) */
     .video-container {
       position: fixed; 
-      bottom: 20px; 
+      bottom: 80px; /* <--- Diubah dari 20px ke 80px agar posisi agak naik */
       right: 20px; 
       width: 200px; 
       z-index: 1000; 
@@ -51,7 +50,6 @@
 
 <body class="container">
 
-  <!-- 🌙 ucapan -->
   <div class="ucapan">
     Barakallah fii umrik Vania
   </div>
@@ -93,14 +91,12 @@
       <div class="flower__line"></div>
     </div>
 
-    <!-- rumput & efek tetap -->
     <div class="growing-grass"></div>
     <div class="grow-ans"></div>
     <div class="long-g"></div>
 
   </div>
 
-  <!-- 📹 Video Box -->
   <div class="video-container">
     <video id="myVideo" autoplay muted loop playsinline controls>
       <source src="videoplayback.mp4" type="video/mp4">
@@ -110,7 +106,6 @@
 
   <script src="main.js"></script>
 
-  <!-- 🛠️ SCRIPT KHUSUS UNTUK MEMAKSA VIDEO BERPUTAR -->
   <script>
     const video = document.getElementById('myVideo');
 
@@ -126,7 +121,7 @@
       if (video.paused) {
         video.play();
       }
-    }, { once: true }); // Hanya berjalan sekali klik awal saja
+    }, { once: true });
   </script>
 </body>
 </html>
