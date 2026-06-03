@@ -28,10 +28,10 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Style tambahan untuk video (Sudah dinaikkan posisinya) */
+    /* Style untuk video box yang bisa digeser */
     .video-container {
       position: fixed; 
-      bottom: 80px; /* <--- Diubah dari 20px ke 80px agar posisi agak naik */
+      bottom: 80px; 
       right: 20px; 
       width: 200px; 
       z-index: 1000; 
@@ -39,11 +39,15 @@
       border: 2px solid rgba(255, 255, 255, 0.7);
       box-shadow: 0 4px 15px rgba(0,0,0,0.5);
       overflow: hidden;
+      cursor: move; /* Mengubah kursor mouse jadi tanda panah geser */
+      touch-action: none; /* Mencegah layar HP ikut ter-scroll saat video digeser */
+      user-select: none;
     }
     
     .video-container video {
       width: 100%;
       display: block;
+      pointer-events: auto; /* Tombol play/pause bawaan video tetap berfungsi */
     }
   </style>
 </head>
@@ -97,7 +101,7 @@
 
   </div>
 
-  <div class="video-container">
+  <div class="video-container" id="draggableVideo">
     <video id="myVideo" autoplay muted loop playsinline controls>
       <source src="videoplayback.mp4" type="video/mp4">
       Your browser does not support the video tag.
@@ -108,20 +112,76 @@
 
   <script>
     const video = document.getElementById('myVideo');
+    const container = document.getElementById('draggableVideo');
 
-    // Coba putar otomatis saat load
+    // 1. Force Autoplay Script
     window.addEventListener('load', () => {
       video.play().catch(error => {
-        console.log("Autoplay diblokir oleh browser, menunggu interaksi user...", error);
+        console.log("Autoplay diblokir browser, menunggu klik user.");
       });
     });
 
-    // Paksa putar begitu user menyentuh atau mengeklik area mana saja di layar
     document.addEventListener('click', () => {
-      if (video.paused) {
-        video.play();
-      }
+      if (video.paused) { video.play(); }
     }, { once: true });
+
+
+    // 2. Drag & Drop Script (Support Mouse & Layar Sentuh HP)
+    let isDragging = false;
+    let startX, startY;
+    let initialLeft, initialTop;
+
+    function startDrag(e) {
+      // Abaikan jika user menekan tombol controls video
+      if (e.target.tagName === 'VIDEO' && e.offsetY > e.target.clientHeight - 40) return;
+      
+      isDragging = true;
+      
+      // Ambil posisi awal pointer (mouse/touch)
+      startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+      startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+      
+      // Ambil posisi koordinat box saat ini
+      const rect = container.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+      
+      // Ubah posisi CSS dari bottom/right ke top/left agar sinkron saat digeser
+      container.style.bottom = 'auto';
+      container.style.right = 'auto';
+      container.style.left = initialLeft + 'px';
+      container.style.top = initialTop + 'px';
+    }
+
+    function doDrag(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+
+      // Hitung pergeseran pointer
+      const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+      const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+      
+      const dx = currentX - startX;
+      const dy = currentY - startY;
+
+      // Update posisi box video sesuai arah geser
+      container.style.left = (initialLeft + dx) + 'px';
+      container.style.top = (initialTop + dy) + 'px';
+    }
+
+    function stopDrag() {
+      isDragging = false;
+    }
+
+    // Listener untuk Mouse (Laptop/PC)
+    container.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('mouseup', stopDrag);
+
+    // Listener untuk Touch (HP/Tablet)
+    container.addEventListener('touchstart', startDrag);
+    document.addEventListener('touchmove', doDrag, { passive: false });
+    document.addEventListener('touchend', stopDrag);
   </script>
 </body>
 </html>
