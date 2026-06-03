@@ -28,6 +28,24 @@
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Style tambahan untuk video agar muncul di depan dan estetik */
+    .video-container {
+      position: fixed; 
+      bottom: 20px; 
+      right: 20px; 
+      width: 200px; 
+      z-index: 1000; 
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+    
+    .video-container video {
+      width: 100%;
+      display: block;
+    }
   </style>
 </head>
 
@@ -81,10 +99,14 @@
     <div class="long-g"></div>
 
   </div>
-<!-- 🎥 VIDEO BACKGROUND -->
-  <video autoplay muted loop playsinline id="myVideo">
-    <source src="videoplayback.mp4" type="video/mp4">
-</video>
+
+  <!-- 📹 Video Box (Muted + Autoplay agar otomatis jalan) -->
+  <div class="video-container">
+    <video autoplay muted loop playsinline controls>
+      <source src="videoplayback.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
 
   <script src="main.js"></script>
 </body>
